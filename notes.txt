@@ -3,3 +3,11 @@
 - node and express for backend
 - UI using react
 - redux for state manegement
+
+Mongo 
+- Atlas is the cloud storage for Mongo - easier than locally stored database
+- Since we are using Heroku to deploy, it is easier to just connect the cloud
+- After logging in, create a project and in that have to create a cluster
+- Once the cluster is created, add user and IP address (add your current)
+- Connect to the db - Connect your application - will get connection details which is used in express
+- mongoose is a package with npm - allows to model data
