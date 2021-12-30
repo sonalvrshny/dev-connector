@@ -11,3 +11,37 @@ Mongo
 - Once the cluster is created, add user and IP address (add your current)
 - Connect to the db - Connect your application - will get connection details which is used in express
 - mongoose is a package with npm - allows to model data
+
+Express server for backend
+
+Step 1:
+- have to create the package.json file
+- in code terminal use - npm init
+- check package name, can add description, entry point(server.js), author and license (MIT)
+
+Step 2:
+- install regular dependencies
+- npm i express express-validator bcryptjs config gravatar jsonwebtoken mongoose request
+- bcryptjs: password encryption
+  config: global variables
+  gravatar: profile avatars
+  request: for http requests mainly for github repos on the social media
+- install dev dependencies
+- npm i -D nodemon concurrently
+  nodemon: watches server, dont have to refresh after every change
+  concurrently: allow backend express server and frontend react server to run together 
+
+Step 3:
+- Create entry file called server.js (see file for details)
+
+Step 4:
+- Update scripts
+- In package.json - change "test" to "start" - and start script is just going to run "node server" - 
+  this is what will be used by heroku
+- for development - create a script called "server" that uses "nodemon server"
+- later - "client" script will run react and "dev" script that will run both (concurrently)
+
+Step 5:
+- Test server
+- In terminal - npm run server - this will start nodemon
+- In postman - get http://localhost:5000 to test if express server is running
