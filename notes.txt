@@ -1,0 +1,5 @@
+- using postman to hit the endpoints
+- using mongoose to interact with the database
+- node and express for backend
+- UI using react
+- redux for state manegement
