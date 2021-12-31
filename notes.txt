@@ -4,6 +4,8 @@
 - UI using react
 - redux for state manegement
 
+-----------------------------------------------------------------------------------------------------
+
 Mongo 
 - Atlas is the cloud storage for Mongo - easier than locally stored database
 - Since we are using Heroku to deploy, it is easier to just connect the cloud
@@ -12,8 +14,9 @@ Mongo
 - Connect to the db - Connect your application - will get connection details which is used in express
 - mongoose is a package with npm - allows to model data
 
-Express server for backend
+-----------------------------------------------------------------------------------------------------
 
+Express server for backend
 Step 1:
 - have to create the package.json file
 - in code terminal use - npm init
@@ -42,6 +45,14 @@ Step 4:
 - later - "client" script will run react and "dev" script that will run both (concurrently)
 
 Step 5:
-- Test server
+- Test the server
 - In terminal - npm run server - this will start nodemon
 - In postman - get http://localhost:5000 to test if express server is running
+
+-----------------------------------------------------------------------------------------------------
+
+Connecting to MongoDB using mongoose
+Step 1:
+- Get the connection details from Atlas
+- Create a config folder with a default.json file and add mongo URI
+- Create a db.js file for connection to db and import in server.js
