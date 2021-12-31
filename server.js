@@ -12,6 +12,12 @@ connectDB();
 // send data to browser that API is running
 app.get('/', (req, res) => res.send('API Running'));
 
+// define routes
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/posts', require('./routes/api/posts'));
+
 // look for env variable called PORT or default to 5000 is no env variable is set
 // this Port will be used when deploying to heroku
 const PORT = process.env.PORT || 5000;

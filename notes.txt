@@ -55,4 +55,24 @@ Connecting to MongoDB using mongoose
 Step 1:
 - Get the connection details from Atlas
 - Create a config folder with a default.json file and add mongo URI
-- Create a db.js file for connection to db and import in server.js
+- Create a db.js file for connection to db and import the function in server.js
+
+Step 2:
+- npm run server to test if mongo is connecting
+
+-----------------------------------------------------------------------------------------------------
+
+Route files with express
+Step 1:
+- create files where we will create all of our routes
+- breaking it down to the following resources: users, auth, profile, post
+- each of these routes will be a js file under routes folder
+- bring in express router to each of these files instead of cluttering everything to the server.js file
+- after populating these files with the routes, import them into server.js using app.use
+
+Step 2:
+- run the server
+- go to postman - get http://localhost:5000/api/users and so on and test the reponse
+
+Step 3:
+- in postman - divide the resources into collections
