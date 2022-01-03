@@ -6,7 +6,7 @@ const ProfileSchema = new mongoose.Schema({
     // we need to connect the type to an id in the User schema
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'user'
     },
     company: {
         type: String
