@@ -5,8 +5,10 @@ import {Link} from 'react-router-dom';
 import { connect } from 'react-redux';
 // get in the action from redux
 import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types'
 
-export const Register = (props) => {
+
+export const Register = ({setAlert}) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -22,7 +24,7 @@ export const Register = (props) => {
         e.preventDefault();
         if (password !== password2) {
             // danger is defined in css - will change colour, bg or anything 
-            props.setAlert('Passwords do not match', 'danger');
+            setAlert('Passwords do not match', 'danger');
         }
         else {
             console.log('Success');
@@ -95,6 +97,10 @@ export const Register = (props) => {
             </p>
         </Fragment>
     )
+}
+
+Register.propTypes ={
+    setAlert: PropTypes.func.isRequired
 }
 
 export default connect(null, {setAlert})(Register);
