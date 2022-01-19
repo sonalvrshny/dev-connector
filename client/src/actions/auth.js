@@ -6,12 +6,13 @@ import setAuthToken from '../utils/setAuthToken';
 // Load user
 export const loadUser = () => async dispatch => {
     // set header with token
-    if (localStorage.token) {
-        setAuthToken(localStorage.token);
-    }
 
     try {
         const res = await axios.get('/api/auth');
+        setAuthToken(localStorage.token);
+        // if (localStorage.token) {
+        //     setAuthToken(localStorage.token);
+        // }
 
         dispatch({
             type: USER_LOADED,
@@ -65,9 +66,9 @@ export const login = (email, password) => async dispatch => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }
+    };
 
-    const body = JSON.stringify({ email, password});
+    const body = JSON.stringify({ email, password });
 
     try {
         const res = await axios.post('/api/auth', body, config);
@@ -76,7 +77,7 @@ export const login = (email, password) => async dispatch => {
         dispatch({
             type: LOGIN_SUCCESS,
             // data that we get back -that is the token 
-            payload:res.data
+            payload: res.data
         });
         dispatch(loadUser());
     } catch (err) {
@@ -91,4 +92,4 @@ export const login = (email, password) => async dispatch => {
             type: LOGIN_FAIL
         });
     }
-}
+};
