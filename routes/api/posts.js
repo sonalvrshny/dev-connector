@@ -3,15 +3,16 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const auth = require('../../middleware/auth');
 
-const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 const Post = require('../../models/Post');
+
+const checkObjectId = require('../../middleware/checkObjectId');
 
 // @route  Post api/posts
 // @desc   Create a post
 // @access Private
 router.post('/', [auth, [
-    check('text', 'Text is required').not().isEmpty()
+    check('text', 'Text is required').notEmpty()
 ]], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -54,7 +55,7 @@ router.get('/', auth, async (req, res) => {
 // @route  Post api/posts/:id
 // @desc   Get post by id
 // @access Private (can only see posts if logged in)
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', auth, checkObjectId('id'), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
@@ -77,7 +78,7 @@ router.get('/:id', auth, async (req, res) => {
 // @route  Delete api/posts/:id
 // @desc   Delete a post by id
 // @access Private (can only see posts if logged in)
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth, checkObjectId('id'), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
@@ -92,11 +93,8 @@ router.delete('/:id', auth, async (req, res) => {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        
-
         await post.remove();
         
-
         res.json({ msg: 'Post removed' });
     } catch (err) {
         // if id passed is not valid
@@ -111,7 +109,7 @@ router.delete('/:id', auth, async (req, res) => {
 // @route  Put api/posts/like/:id - need to know id of post being liked
 // @desc   Like a post
 // @access Private (can only see posts if logged in)
-router.put('/like/:id', auth, async (req, res) => {
+router.put('/like/:id', auth, checkObjectId('id'), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
@@ -121,15 +119,14 @@ router.put('/like/:id', auth, async (req, res) => {
         }
 
         // check if post has already been liked
-        if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
-            // 400 is bad request
+        if (post.likes.some((like) => like.user.toString() === req.user.id)) {
             return res.status(400).json({ msg: 'Post already liked' });
         }
 
         post.likes.unshift({ user: req.user.id });
 
         await post.save();
-        res.json(post.likes);
+        return res.json(post.likes);
 
     } catch (err) {
         console.error(err);
@@ -140,7 +137,7 @@ router.put('/like/:id', auth, async (req, res) => {
 // @route  Put api/posts/unlike/:id
 // @desc   Unlike a post
 // @access Private (can only see posts if logged in)
-router.put('/unlike/:id', auth, async (req, res) => {
+router.put('/unlike/:id', auth, checkObjectId('id'), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
@@ -149,21 +146,18 @@ router.put('/unlike/:id', auth, async (req, res) => {
             return res.status(404).json({ msg: 'Post not found' });
         }
 
-        // check if post has already been liked
-        if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
-            // 400 is bad request
-            return res.status(400).json({ msg: 'Post has not been liked' });
+        // Check if the post has not yet been liked
+        if (!post.likes.some((like) => like.user.toString() === req.user.id)) {
+            return res.status(400).json({ msg: 'Post has not yet been liked' });
         }
-
-
-        // get the remove index
-        const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
-        if (removeIndex !== -1) {
-            post.likes.splice(removeIndex, 1);
-        }
+  
+        // remove the like
+        post.likes = post.likes.filter(
+            ({ user }) => user.toString() !== req.user.id
+        );
 
         await post.save();
-        res.json(post.likes);
+        return res.json(post.likes);
 
     } catch (err) {
         console.error(err);
@@ -175,8 +169,8 @@ router.put('/unlike/:id', auth, async (req, res) => {
 // @route  Post api/posts/comment/:id
 // @desc   Comment on a post based on id
 // @access Private
-router.post('/comment/:id', [auth, [
-    check('text', 'Text is required').not().isEmpty()
+router.post('/comment/:id', [auth, checkObjectId('id'), [
+    check('text', 'Text is required').notEmpty()
 ]], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -207,7 +201,7 @@ router.post('/comment/:id', [auth, [
 // @route  Delete api/posts/comment/:id/:comment_id
 // @desc   Delete a comment
 // @access Private (can only see posts if logged in)
-router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
+router.delete('/comment/:id/:comment_id', auth, checkObjectId('id'), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
@@ -217,7 +211,6 @@ router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
         }
 
         const comment = post.comments.find(comment => comment.id = req.params.comment_id);
-
 
         // make sure comment exists
         if (!comment) {
@@ -231,17 +224,13 @@ router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
         }
 
         // get the remove index
-        const removeIndex = post.comments.map(comment => comment.id.toString()).indexOf(req.params.comment_id);
-        if (removeIndex !== -1) {
-            post.comments.splice(removeIndex, 1);
-        }
-        else {
-            return res.status(404).json({ msg: "Comment does not exist" });
-        }
+        post.comments = post.comments.filter(
+            ({ id }) => id !== req.params.comment_id
+        );
 
         await post.save();
 
-        res.json(post.comments);
+        return res.json(post.comments);
     } catch (err) {
         // if id passed is not valid
         if (err.kind === 'ObjectId') {
