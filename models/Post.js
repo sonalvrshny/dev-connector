@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const PostSchema = new mongoose.Schema({
+const PostSchema = new Schema({
     // a post is connected to a user
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        type: Schema.Types.ObjectId
     },
     text: {
         type: String,
@@ -22,16 +22,14 @@ const PostSchema = new mongoose.Schema({
         // array of users who like the post
         {
             user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'user'
+                type: Schema.Types.ObjectId
             }
         }
     ],
     comments: [
         {
             user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'user'
+                type: Schema.Types.ObjectId
             },
             text: {
                 type: String,
